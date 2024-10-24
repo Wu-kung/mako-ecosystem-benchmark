@@ -1,0 +1,10 @@
+{
+  "name": "mako-ecosystem-benchmark",
+  "type": "module",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "meow": "^13.2.0",
+    "zx": "^8.1.9"
+  },
+  "packageManager": "pnpm@8.15.9"
+}
