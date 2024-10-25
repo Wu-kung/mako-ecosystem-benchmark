@@ -1,0 +1,28 @@
+name: Env
+
+description: Initialize benchmark environment with Node.js
+
+runs:
+  using: composite
+  steps:
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Activate corepack
+      shell: bash
+      run: |
+        # corepack > 0.24.1 will use native fetch
+        # and native fetch not support HTTP_PROXY
+        # https://github.com/nodejs/undici/issues/1650
+        npm install -g corepack@0.24.1
+        corepack enable
+    - name: Install dependencies with pnpm
+      shell: bash
+      run: pnpm install --prefer-frozen-lockfile --prefer-offline
+    - name: Set Mako Dir
+      shell: bash
+      run: |
+        if [[ ! -z "$PNPM_CACHE" ]]; then
+          echo "MAKO_DIR=$PNPM_CACHE/mako" >> $GITHUB_ENV
+        fi

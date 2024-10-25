@@ -30,3 +30,29 @@ jobs:
               body: `⏳ Triggered benchmark: ${urlLink}`
             })
             return comment.id
+
+  bench:
+    runs-on: [self-hosted, benchmark]
+    needs: [create-comment]
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        shardIndex: [1]
+        shardTotal: [1]
+      fail-fast: false
+    outputs:
+      diff-result: ${{ steps.print-results.outputs.diff-result }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Init env
+        uses: ./.github/actions/env
+      - uses: ./.github/actions/build-mako
+        with:
+          path: ${{ env.MAKO_DIR }}
+          ref: pull/${{ inputs.prNumber }}/head
+      - name: Run benchmark
+        run: node bin/cli.js bench --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-artifacts-${{ matrix.shardIndex }}-${{ matrix.shardTotal }}
+          path: output

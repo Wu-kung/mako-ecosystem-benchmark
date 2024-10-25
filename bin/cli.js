@@ -60,6 +60,7 @@ if (!command || command === "build") {
 
   await $`pnpm --version`;
   await $`pnpm install --prefer-frozen-lockfile --prefer-offline`;
+  await $`pnpm run release:mako`;
 
   cd(cwd);
 }
