@@ -1,0 +1,32 @@
+name: Bench Mako PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: "PR number"
+        required: true
+        type: string
+
+jobs:
+  create-comment:
+    runs-on: ubuntu-latest
+    outputs:
+      comment-id: ${{ steps.create-comment.outputs.result }}
+    steps:
+      - id: create-comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const urlLink = `[Open](${url})`
+
+            const { data: comment } = await github.rest.issues.createComment({
+              issue_number: context.payload.inputs.prNumber,
+              owner: context.repo.owner,
+              repo: 'mako',
+              body: `⏳ Triggered benchmark: ${urlLink}`
+            })
+            return comment.id
