@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import meow from "meow";
 import { $, cd } from "zx";
@@ -60,7 +60,32 @@ if (!command || command === "build") {
 
   await $`pnpm --version`;
   await $`pnpm install --prefer-frozen-lockfile --prefer-offline`;
-  // await $`pnpm run release:mako`;
+  await $`cargo build --release`;
 
   cd(cwd);
+}
+
+if (!command || command === "bench") {
+  cd(makoDirectory);
+
+  const baselineHash = (await $`git rev-parse --short HEAD`).stdout.trim();
+  const baselineMakoPath = `./tmp/mako-${baselineHash}`;
+  if (!existsSync(join(__dirname, `../tmp/mako-${baselineHash}`))) {
+    if (shouldBuild) {
+      await $`cargo build --release`;
+      await $`cp target/release/mako ${baselineMakoPath}`;
+    } else {
+      console.log(`Since --no-build is set, build for baseline is skipped.`);
+    }
+  }
+
+  let currentMakoPath = "./target/release/mako";
+  const currentHash = (await $`git rev-parse --short HEAD`).stdout.trim();
+  const makoCurrentName = `mako-${currentHash}`;
+  await $`cp target/release/mako ./tmp/${makoCurrentName}`;
+  currentMakoPath = `./tmp/${makoCurrentName}`;
+
+  const warmup = argv.warmup || 3;
+  const runs = argv.runs || 10;
+  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production"`;
 }
