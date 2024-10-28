@@ -70,6 +70,7 @@ if (!command || command === "bench") {
 
   const baselineHash = (await $`git rev-parse --short HEAD`).stdout.trim();
   const baselineMakoPath = `./tmp/mako-${baselineHash}`;
+  await $`cp target/release/mako ${baselineMakoPath}`;
 
   let currentMakoPath = "./target/release/mako";
   const currentHash = (await $`git rev-parse --short HEAD`).stdout.trim();
