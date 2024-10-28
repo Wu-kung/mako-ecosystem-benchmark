@@ -80,9 +80,9 @@ if (!command || command === "bench") {
   await $`cp target/release/mako ./tmp/${makoCurrentName}`;
   currentMakoPath = `./tmp/${makoCurrentName}`;
 
-  const warmup = argv.warmup || 3;
-  const runs = argv.runs || 10;
-  const casePath = argv.case || 'projects/three10x';
+  const warmup = 3;
+  const runs = 10;
+  const casePath = 'projects/three10x';
 
   await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production" --export-markdown`;
 }
