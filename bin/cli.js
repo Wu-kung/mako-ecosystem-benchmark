@@ -68,6 +68,8 @@ if (!command || command === "build") {
 if (!command || command === "bench") {
   cd(makoDirectory);
 
+  await $`mkdir -p ./tmp`;
+
   const baselineHash = (await $`git rev-parse --short HEAD`).stdout.trim();
   const baselineMakoPath = `./tmp/mako-${baselineHash}`;
   await $`cp target/release/mako ${baselineMakoPath}`;
@@ -80,5 +82,7 @@ if (!command || command === "bench") {
 
   const warmup = argv.warmup || 3;
   const runs = argv.runs || 10;
-  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production"`;
+  const casePath = argv.case || 'projects/three10x';
+
+  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production" --export-markdown`;
 }

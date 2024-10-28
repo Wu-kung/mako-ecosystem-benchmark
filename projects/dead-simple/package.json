@@ -1,0 +1,12 @@
+{
+  "name": "@example/dead-simple",
+  "private": true,
+  "scripts": {
+    "bundler": "bundler"
+  },
+  "devDependencies": {
+    "@sorrycc/bundler": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
