@@ -39,10 +39,3 @@ runs:
       shell: bash
       run: >-
         node bin/cli.js build
-    - uses: actions/download-artifact@v4
-      with:
-        name: binding-linux-x64-gnu
-        path: ${{ inputs.path }}/crates/binding
-    - name: Show restored binding
-      shell: bash
-      run: ls -lah ${{ inputs.path }}/crates/binding/*.node
