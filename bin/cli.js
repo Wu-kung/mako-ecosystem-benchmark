@@ -70,14 +70,6 @@ if (!command || command === "bench") {
 
   const baselineHash = (await $`git rev-parse --short HEAD`).stdout.trim();
   const baselineMakoPath = `./tmp/mako-${baselineHash}`;
-  if (!existsSync(join(__dirname, `../tmp/mako-${baselineHash}`))) {
-    if (shouldBuild) {
-      await $`cargo build --release`;
-      await $`cp target/release/mako ${baselineMakoPath}`;
-    } else {
-      console.log(`Since --no-build is set, build for baseline is skipped.`);
-    }
-  }
 
   let currentMakoPath = "./target/release/mako";
   const currentHash = (await $`git rev-parse --short HEAD`).stdout.trim();
