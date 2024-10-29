@@ -84,5 +84,5 @@ if (!command || command === "bench") {
   const runs = 10;
   const casePath = 'projects/three10x';
 
-  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production" --export-markdown`;
+  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production"`;
 }
