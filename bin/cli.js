@@ -88,4 +88,6 @@ if (!command || command === "bench") {
   const outputPath = join(cwd, "benchmark-results.md");
 
   await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production" --show-output --export-markdown ${outputPath}`;
+
+  cd(cwd);
 }
