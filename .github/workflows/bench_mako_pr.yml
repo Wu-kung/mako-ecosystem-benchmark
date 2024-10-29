@@ -58,13 +58,17 @@ jobs:
     needs: [create-comment, bench]
     if: always()
     steps:
+      - name: Check current working directory
+        run: pwd
+
       - name: Read benchmark results
         id: read_results
         run: |
           node -e "
             const fs = require('fs');
-            const path = '.mako/benchmark-results.md';
-            const result = fs.readFileSync(path, 'utf8');
+            const path = require('path');
+            const filePath = path.join(process.cwd(), '.mako/benchmark-results.md');
+            const result = fs.readFileSync(filePath, 'utf8');
             console.log(\`::set-output name=benchmark_results::\${result}\`);
           "
 
