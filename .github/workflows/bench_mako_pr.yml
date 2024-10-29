@@ -68,7 +68,7 @@ jobs:
           node -e "
             const fs = require('fs');
             const path = require('path');
-            const filePath = path.join(process.cwd(), '.mako/benchmark-results.md');
+            const filePath = path.join(process.cwd(), 'benchmark-results.md');
             const result = fs.readFileSync(filePath, 'utf8');
             console.log(\`::set-output name=benchmark_results::\${result}\`);
           "

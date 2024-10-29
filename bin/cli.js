@@ -85,7 +85,7 @@ if (!command || command === "bench") {
   const warmup = 3;
   const runs = 10;
   const casePath = "examples/with-antd";
-  const outputPath = "benchmark-results.md";
+  const outputPath = join(cwd, "benchmark-results.md");
 
   await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production" --show-output --export-markdown ${outputPath}`;
 }
