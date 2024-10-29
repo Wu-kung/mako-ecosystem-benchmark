@@ -1,9 +1,11 @@
-import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { exec } from "node:child_process";
+import util from "node:util";
 import meow from "meow";
 import { $, cd } from "zx";
-import actionsCore from "@actions/core";
 import { dirExist } from "../lib/index.js";
+
+const execPromise = util.promisify(exec);
 
 $.verbose = true;
 
@@ -82,7 +84,8 @@ if (!command || command === "bench") {
 
   const warmup = 3;
   const runs = 10;
-  const casePath = 'projects/three10x';
+  const casePath = "examples/with-antd";
+  const outputPath = "benchmark-results.md";
 
-  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production"`;
+  await $`hyperfine --warmup ${warmup} --runs ${runs} "${currentMakoPath} ${casePath} --mode production" "${baselineMakoPath} ${casePath} --mode production" --show-output --export-markdown ${outputPath}`;
 }
