@@ -58,6 +58,7 @@ jobs:
     needs: [create-comment, bench]
     if: always()
     steps:
+      - uses: actions/checkout@v4
       - name: Check current working directory
         run: pwd
 
