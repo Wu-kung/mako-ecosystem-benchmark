@@ -58,22 +58,32 @@ jobs:
     needs: [create-comment, bench]
     if: always()
     steps:
-      - uses: actions/github-script@v6
+      - name: Read benchmark results
+        id: read_results
+        run: |
+          const fs = require('fs');
+          const path = '.mako/benchmark-results.md';
+          const result = fs.readFileSync(path, 'utf8');
+          echo "::set-output name=benchmark_results::${result}"
+
+      - name: Update comment
+        uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.RSPACK_BOT_ACCESS_TOKEN }}
-          script: |
-            const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
-            const urlLink = `[Open](${url})`
-            const body = `
-            📝 Benchmark detail: ${urlLink}
+            github-token: ${{ secrets.MAKO_BOT_ACCESS_TOKEN }}
+            script: |
+              const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+              const urlLink = `[Open](${url})`
+              const result = `${{ steps.read_results.outputs.benchmark_results }}`
 
-            ${result}
-            `
+              const body = `
+              📝 Benchmark detail: ${urlLink}
 
-            await github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: 'mako',
-              comment_id: `${{ needs.create-comment.outputs.comment-id }}`,
-              body
-            })
-            
+              ${result}
+              `
+
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: 'mako',
+                comment_id: `${{ needs.create-comment.outputs.comment-id }}`,
+                body
+              })
