@@ -101,12 +101,12 @@ jobs:
             const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
             const urlLink = `[Open](${url})`
 
-            const result = `\${{ steps.read_results.outputs.benchmark_results }}`
-            const body = \`
+            const result = `${{ steps.read_results.outputs.benchmark_results }}`
+            const body = `
             📝 Benchmark detail: ${urlLink}
 
-            \${result}
-            \`
+            ${result}
+            `
 
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
