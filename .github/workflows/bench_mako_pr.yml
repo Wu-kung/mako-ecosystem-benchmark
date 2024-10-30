@@ -31,52 +31,51 @@ jobs:
             })
             return comment.id
 
-  # bench:
-  #   runs-on: ubuntu-latest
-  #   needs: [create-comment]
-  #   strategy:
-  #     matrix:
-  #       shardIndex: [1]
-  #       shardTotal: [1]
-  #     fail-fast: false
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Init env
-  #       uses: ./.github/actions/env
-  #     - uses: ./.github/actions/build-mako
-  #       with:
-  #         path: ${{ env.MAKO_DIR }}
+  bench:
+    runs-on: ubuntu-latest
+    needs: [create-comment]
+    strategy:
+      matrix:
+        shardIndex: [1]
+        shardTotal: [1]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Init env
+        uses: ./.github/actions/env
+      - uses: ./.github/actions/build-mako
+        with:
+          path: ${{ env.MAKO_DIR }}
 
-  #     - name: Install hyperfine
-  #       run: sudo apt-get update && sudo apt-get install -y hyperfine
+      - name: Install hyperfine
+        run: sudo apt-get update && sudo apt-get install -y hyperfine
 
-  #     - name: Run benchmark
-  #       run: node bin/cli.js bench
+      - name: Run benchmark
+        run: node bin/cli.js bench
 
-  #     - name: List files
-  #       run: ls -la
+      - name: List files
+        run: ls -la
 
-  #     - name: Upload benchmark results
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: benchmark-results
-  #         path: ./benchmark-results.md
-  #         if-no-files-found: error
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: ./benchmark-results.md
+          if-no-files-found: error
 
   comment-results:
     runs-on: ubuntu-latest
-    # needs: [create-comment, bench]
-    needs: [create-comment]
+    needs: [create-comment, bench]
     if: always()
     steps:
       - uses: actions/checkout@v4
       - name: Check current working directory
         run: pwd
-      # - name: Download benchmark results
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: benchmark-results
-      #     path: ./
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-results
+          path: ./
       - name: List files
         run: ls -la
 
