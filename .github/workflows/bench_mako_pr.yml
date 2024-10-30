@@ -98,19 +98,9 @@ jobs:
           github-token: ${{ secrets.MAKO_BOT_ACCESS_TOKEN }}
           result-encoding: string
           script: |
-            const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
-            const urlLink = `[Open](${url})`
-
-            const result = `${{ steps.read_results.outputs.benchmark_results }}`
-            const body = `
-            📝 Benchmark detail: ${urlLink}
-
-            ${result}
-            `
-
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: 'mako',
               comment_id: `${{ needs.create-comment.outputs.comment-id }}`,
-              body
+              body: `${{ steps.read_results.outputs.benchmark_results }}`
             })
