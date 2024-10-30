@@ -86,11 +86,16 @@ jobs:
       - name: Read benchmark results
         id: read_results
         run: |
-          {
-            echo "benchmark_results<<EOF"
-            cat benchmark-results.md
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
+          # 读取 Markdown 表格内容
+          BENCHMARK_RESULTS=$(cat benchmark-results.md)
+
+          # 去掉反引号
+          CLEANED_RESULTS=$(echo "$BENCHMARK_RESULTS" | sed 's/`//g')
+
+          # 将处理后的结果输出到 GITHUB_OUTPUT
+          echo "benchmark_results<<EOF" >> $GITHUB_OUTPUT
+          echo "$CLEANED_RESULTS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Update comment
         uses: actions/github-script@v6
@@ -98,9 +103,19 @@ jobs:
           github-token: ${{ secrets.MAKO_BOT_ACCESS_TOKEN }}
           result-encoding: string
           script: |
+            const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const urlLink = `[Open](${url})`
+
+            const result = `${{ steps.read_results.outputs.benchmark_results }}`
+            const body = `
+            📝 Benchmark detail: ${urlLink}
+
+            ${result}
+            `
+
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: 'mako',
               comment_id: `${{ needs.create-comment.outputs.comment-id }}`,
-              body: `${{ steps.read_results.outputs.benchmark_results }}`
+              body
             })
