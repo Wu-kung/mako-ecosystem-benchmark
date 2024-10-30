@@ -79,11 +79,17 @@ jobs:
       - name: List files
         run: ls -la
 
+      - name: Output file content
+        run: |
+          cat benchmark-results.md
       - name: Read benchmark results
         id: read_results
         run: |
-          benchmark_results=$(cat benchmark-results.md)
-          echo "benchmark_results=$benchmark_results" >> $GITHUB_OUTPUT
+          {
+            echo "benchmark_results<<EOF"
+            cat benchmark-results.md
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Update comment
         uses: actions/github-script@v6
